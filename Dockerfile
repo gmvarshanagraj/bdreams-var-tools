@@ -1,21 +1,16 @@
 
+# Pull base image
+FROM debian:latest
 
-FROM centos
+# Dockerfile Maintainer
+MAINTAINER varsha "gmvarsha100@gmail.com"
 
-RUN yum install python3 -y
-RUN yum install java -y
-RUN yum install git -y
-RUN yum install wget -y
-RUN yum install net-tools -y
+# Install nginx and adjust nginx config to stay in foreground
+RUN apt-get update && apt-get install --no-install-recommends -y nginx; \
+ echo "daemon off;" >> /etc/nginx/nginx.conf
 
-RUN wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat/jenkins.repo
-RUN rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key
-RUN yum install jenkins
+# Expose HTTP
+EXPOSE 80
 
-COPY mail.py /
-COPY launch.py /
-COPY docker.repo /etc/yum.repos.d/
-
-RUN yum install docker-ce -y
-
-CMD java -jar /usr/lib/jenkins/jenkins.war
+# Start nginx
+CMD ["/usr/sbin/nginx"]
